@@ -1,8 +1,10 @@
 {
   "mcpServers": {
     "skillpath-learning-path-generator": {
-      "command": "python",
-      "args": ["mcp_server.py"]
+      "command": "C:\\Users\\Sarani Nowbattu\\Documents\\antigravity\\brave-rutherford\\venv\\Scripts\\python.exe",
+      "args": [
+        "C:\\Users\\Sarani Nowbattu\\Documents\\antigravity\\brave-rutherford\\mcp_server.py"
+      ]
     }
   }
 }
