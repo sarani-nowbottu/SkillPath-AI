@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}SkillPath AI — Intelligent Career Mentor & Learning Path Generator{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <span class="hero-tagline">AI-Powered Career Roadmap for College Students</span>
+        <h1 class="hero-title">From Where You Are to Where You Want to Be.</h1>
+        <p class="hero-subtitle">
+            Most students get overwhelmed by thousands of tutorials without knowing what to learn or why. 
+            SkillPath AI analyzes your current skills, calculates your exact gaps against industry benchmarks, 
+            and creates an actionable, project-first roadmap calibrated to your daily study hours.
+        </p>
+
+        <div class="hero-actions">
+            <a href="{{ url_for('onboarding') }}" class="btn btn-primary btn-lg">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                Build My Learning Path
+            </a>
+            <a href="{{ url_for('demo_login') }}" class="btn btn-secondary btn-lg">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                </svg>
+                Explore Live Demo Profile
+            </a>
+        </div>
+
+        <div style="font-size: 0.85rem; color: var(--slate-500); display: flex; align-items: center; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
+            <span>✓ 100% Free & Open Resources</span>
+            <span>✓ Deterministic Skill-Gap Logic</span>
+            <span>✓ Built-in Offline Fallback</span>
+            <span>✓ Verified Curated Curriculum</span>
+        </div>
+    </section>
+
+    <!-- Roadmap Interactive Preview -->
+    <section class="card" style="margin-top: 1rem; border-color: var(--primary-border); background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);">
+        <div class="card-header">
+            <div>
+                <span class="badge badge-primary">Curriculum Preview</span>
+                <h3 style="margin-top: 0.25rem;">Full-Stack Developer Learning Journey</h3>
+            </div>
+            <div style="font-size: 0.9rem; color: var(--slate-500);">
+                Estimated Workload: <strong>170 Hours</strong> • 4 Sequential Stages
+            </div>
+        </div>
+
+        <div class="grid-4" style="margin-top: 1rem;">
+            <div style="background: white; border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1.25rem;">
+                <div style="font-weight: 700; color: var(--primary); font-size: 0.85rem; margin-bottom: 0.25rem;">STAGE 1 • 30 HRS</div>
+                <h4 style="margin-bottom: 0.5rem;">Frontend Foundations</h4>
+                <p style="font-size: 0.85rem; color: var(--slate-600);">Semantic HTML5, CSS Grid, Flexbox, responsive design, and accessible markup.</p>
+                <div style="margin-top: 0.75rem; font-size: 0.8rem; font-weight: 600; color: var(--slate-700);">
+                    🛠 Mini-Project: Responsive Portfolio
+                </div>
+            </div>
+
+            <div style="background: white; border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1.25rem;">
+                <div style="font-weight: 700; color: var(--primary); font-size: 0.85rem; margin-bottom: 0.25rem;">STAGE 2 • 45 HRS</div>
+                <h4 style="margin-bottom: 0.5rem;">Core JavaScript & DOM</h4>
+                <p style="font-size: 0.85rem; color: var(--slate-600);">ES6+ syntax, asynchronous JS, Promises, async/await, DOM events, and fetch API.</p>
+                <div style="margin-top: 0.75rem; font-size: 0.8rem; font-weight: 600; color: var(--slate-700);">
+                    🛠 Mini-Project: Kanban Task Board
+                </div>
+            </div>
+
+            <div style="background: white; border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1.25rem;">
+                <div style="font-weight: 700; color: var(--primary); font-size: 0.85rem; margin-bottom: 0.25rem;">STAGE 3 • 50 HRS</div>
+                <h4 style="margin-bottom: 0.5rem;">Backend & SQL</h4>
+                <p style="font-size: 0.85rem; color: var(--slate-600);">RESTful APIs, routing, HTTP verbs, relational schema design, SQL queries & parameterized ORM.</p>
+                <div style="margin-top: 0.75rem; font-size: 0.8rem; font-weight: 600; color: var(--slate-700);">
+                    🛠 Mini-Project: Student Notes REST API
+                </div>
+            </div>
+
+            <div style="background: white; border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1.25rem;">
+                <div style="font-weight: 700; color: var(--primary); font-size: 0.85rem; margin-bottom: 0.25rem;">STAGE 4 • 45 HRS</div>
+                <h4 style="margin-bottom: 0.5rem;">Full-Stack & Deploy</h4>
+                <p style="font-size: 0.85rem; color: var(--slate-600);">Frontend-to-backend integration, authentication, CORS, git workflows, and cloud deployment.</p>
+                <div style="margin-top: 0.75rem; font-size: 0.8rem; font-weight: 600; color: var(--slate-700);">
+                    🛠 Mini-Project: Collaborative Issue Tracker
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4-Step Methodology -->
+    <section style="margin: 3.5rem 0 2.5rem;">
+        <div style="text-align: center; max-width: 600px; margin: 0 auto 2.5rem;">
+            <span class="badge badge-primary">Proven Methodology</span>
+            <h2 style="margin-top: 0.5rem;">How SkillPath AI Works</h2>
+            <p>A systematic 4-step framework designed to eliminate guesswork and build interview-grade skills.</p>
+        </div>
+
+        <div class="grid-4">
+            <div class="card" style="text-align: center;">
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; margin: 0 auto 1rem;">1</div>
+                <h4>Define Career Goal</h4>
+                <p style="font-size: 0.9rem;">Select your target tech domain and tell us how many hours per day you can honestly dedicate to studying.</p>
+            </div>
+
+            <div class="card" style="text-align: center;">
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; margin: 0 auto 1rem;">2</div>
+                <h4>Diagnostic Assessment</h4>
+                <p style="font-size: 0.9rem;">Take a short, curated diagnostic quiz testing foundational concepts rather than just manual checkboxes.</p>
+            </div>
+
+            <div class="card" style="text-align: center;">
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; margin: 0 auto 1rem;">3</div>
+                <h4>Skill-Gap Analysis</h4>
+                <p style="font-size: 0.9rem;">Discover your exact gaps against industry benchmarks with transparent math, priorities, and schedule feasibility.</p>
+            </div>
+
+            <div class="card" style="text-align: center;">
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; margin: 0 auto 1rem;">4</div>
+                <h4>Adaptive AI Roadmap</h4>
+                <p style="font-size: 0.9rem;">Follow an actionable checklist with verified links, mini-projects, and an on-demand AI career mentor.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Realistic Student Journey Showcase -->
+    <section class="card" style="background: white; border: 1px solid var(--slate-200); padding: 2rem;">
+        <div class="card-header">
+            <div>
+                <span class="badge badge-success">Real Student Journey Case Study</span>
+                <h3 style="margin-top: 0.35rem;">From College Junior to Confident Interviewee</h3>
+            </div>
+        </div>
+
+        <div class="grid-2" style="align-items: center;">
+            <div>
+                <p style="font-size: 1rem; color: var(--slate-700); line-height: 1.6;">
+                    <strong>Alex Chen</strong>, a 2nd Year Computer Science student, wanted to apply for software engineering internships. 
+                    He had basic knowledge of HTML and C++, but kept getting stuck on complex React tutorials and had never built a backend API.
+                </p>
+                <div style="margin: 1.25rem 0; padding-left: 1rem; border-left: 3px solid var(--primary);">
+                    <p style="font-size: 0.92rem; color: var(--slate-600); margin-bottom: 0.5rem;">
+                        <strong>The Diagnostic Result:</strong> Alex scored 100% on HTML/CSS and SQL queries, but only 50% on JavaScript core and 0% on REST API fundamentals.
+                    </p>
+                    <p style="font-size: 0.92rem; color: var(--slate-600); margin-bottom: 0;">
+                        <strong>The SkillPath Solution:</strong> Rather than jumping straight into React frameworks, SkillPath generated a tailored 10-week roadmap (2.5 hrs/day) prioritizing DOM manipulation, Promises, and Flask REST APIs.
+                    </p>
+                </div>
+                <div style="margin-top: 1.5rem;">
+                    <a href="{{ url_for('demo_login') }}" class="btn btn-outline">
+                        Inspect Alex's Roadmap & Dashboard →
+                    </a>
+                </div>
+            </div>
+
+            <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1.5rem;">
+                <h4 style="margin-bottom: 1rem; font-size: 0.95rem; color: var(--slate-800);">Alex's Verified Milestones</h4>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.88rem;">
+                        <span>✓ Stage 1: Modern Semantic Portfolio</span>
+                        <span class="badge badge-success">Completed</span>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.88rem;">
+                        <span>⚡ Stage 2: Kanban Board (ES6 & LocalStorage)</span>
+                        <span class="badge badge-primary">Active</span>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.88rem;">
+                        <span>⏳ Stage 3: Student Notes REST API & SQL</span>
+                        <span class="badge badge-neutral">Upcoming</span>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.88rem;">
+                        <span>⏳ Stage 4: Full-Stack Issue Tracker & Deployment</span>
+                        <span class="badge badge-neutral">Upcoming</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--slate-200); display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.85rem; font-weight: 600; color: var(--slate-600);">Overall Progress:</span>
+                    <strong style="color: var(--primary); font-size: 1.1rem;">31.6%</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Supported Career Goals Grid -->
+    <section style="margin: 3.5rem 0 2rem;">
+        <div style="text-align: center; max-width: 600px; margin: 0 auto 2rem;">
+            <span class="badge badge-primary">Comprehensive Career Paths</span>
+            <h2 style="margin-top: 0.5rem;">Explore Supported Tech Roles</h2>
+            <p>Every pathway includes curated benchmark skills, real diagnostic quizzes, and verified learning resources.</p>
+        </div>
+
+        <div class="grid-3">
+            {% for name, path in careers.items() %}
+                <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                            <h4>{{ name }}</h4>
+                            <span class="badge badge-neutral">{{ path.stages | length }} Stages</span>
+                        </div>
+                        <p style="font-size: 0.88rem; color: var(--slate-600); margin-bottom: 1rem;">
+                            {{ path.description }}
+                        </p>
+                        <div style="font-size: 0.8rem; color: var(--slate-500); margin-bottom: 1rem;">
+                            <strong>Core Skills:</strong> 
+                            {% for b in path.benchmark_skills[:3] %}
+                                {{ b.skill }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('onboarding') }}?goal={{ name }}" class="btn btn-secondary btn-sm" style="width: 100%;">
+                            Select {{ name }}
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SkillPath AI — Personalized Career Learning Path Generator{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Sticky Navigation Bar -->
+    <header class="navbar">
+        <div class="container nav-wrapper">
+            <a href="{{ url_for('index') }}" class="brand-logo" aria-label="SkillPath AI Home">
+                <div class="brand-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                </div>
+                <span>SkillPath <span style="color: var(--primary);">AI</span></span>
+            </a>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('onboarding') }}">Create Plan</a></li>
+                    {% if student %}
+                        <li><a href="{{ url_for('assessment') }}">Diagnostic Quiz</a></li>
+                        <li><a href="{{ url_for('gap_analysis') }}">Skill Gaps</a></li>
+                        <li><a href="{{ url_for('dashboard') }}">My Roadmap</a></li>
+                        <li><a href="{{ url_for('profile') }}">Profile</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <!-- One-click Demo Reviewer Button -->
+                <a href="{{ url_for('demo_login') }}" class="demo-pill" title="Review with pre-populated sample student data">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                    </svg>
+                    <span>Demo Profile</span>
+                </a>
+
+                {% if student %}
+                    <span style="font-size: 0.85rem; font-weight: 600; color: var(--slate-700);">
+                        {{ student.name }}
+                    </span>
+                {% else %}
+                    <a href="{{ url_for('onboarding') }}" class="btn btn-primary btn-sm">Get Started</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Flash Notifications Container -->
+    <div class="container flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-alert flash-{{ category }}" role="alert">
+                        <span>{{ message }}</span>
+                        <button type="button" onclick="this.parentElement.remove()" style="background: none; border: none; cursor: pointer; font-size: 1.1rem; color: inherit;">&times;</button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Dynamic Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Floating AI Career Mentor Button & Sliding Drawer -->
+    {% if student %}
+        <button id="mentor-drawer-toggle" class="mentor-drawer-toggle" aria-label="Open AI Career Mentor">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>Ask Mentor</span>
+        </button>
+
+        <aside id="mentor-drawer" class="mentor-drawer" aria-label="AI Career Mentor Chat">
+            <div class="mentor-header">
+                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #6366f1; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;">AI</div>
+                    <div>
+                        <div style="font-weight: 700; font-size: 0.95rem;">SkillPath Career Mentor</div>
+                        <div style="font-size: 0.72rem; color: var(--slate-400);">Context-aware guidance & hints</div>
+                    </div>
+                </div>
+                <button id="mentor-drawer-close" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.25rem;">&times;</button>
+            </div>
+
+            <div id="mentor-chat-body" class="mentor-chat-body">
+                <div class="chat-bubble assistant">
+                    👋 Hi <strong>{{ student.name }}</strong>! I am your SkillPath Career Mentor. 
+                    I'm tracking your progress toward <strong>{{ student.career_goal }}</strong>. 
+                    Ask me for hints, concept explanations in plain English, or interview drills!
+                </div>
+                {% if chat_history %}
+                    {% for msg in chat_history %}
+                        <div class="chat-bubble {{ msg.role }}">
+                            {{ msg.content | replace('\n', '<br>') | safe }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Quick Action Prompt Pills -->
+            <div class="mentor-pills">
+                <button class="quick-pill" data-prompt="Give me a hint for my current stage project">💡 Give me a hint</button>
+                <button class="quick-pill" data-prompt="Explain this stage's core concept with a real-life analogy">📖 Explain simply</button>
+                <button class="quick-pill" data-prompt="Give me a practice interview question for my career goal">🎯 Interview question</button>
+                <button class="quick-pill" data-prompt="Why does this skill matter in real software jobs?">💼 Why this matters</button>
+            </div>
+
+            <div class="mentor-input-bar">
+                <input type="text" id="mentor-input-text" class="form-control" placeholder="Ask a question, request a hint..." aria-label="Mentor message">
+                <button type="button" id="mentor-send-btn" class="btn btn-primary btn-sm">Send</button>
+            </div>
+        </aside>
+    {% endif %}
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div>
+                <div style="font-weight: 700; color: var(--slate-900); margin-bottom: 0.25rem;">SkillPath AI</div>
+                <div style="font-size: 0.8rem; color: var(--slate-500);">Personalized Career Learning Path Generator • NxtWave Mega Workshop Submission</div>
+            </div>
+            <div style="display: flex; gap: 1.5rem; font-size: 0.85rem;">
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('onboarding') }}">Create Plan</a>
+                <a href="{{ url_for('demo_login') }}">Demo Profile</a>
+                <a href="https://github.com" target="_blank" rel="noopener">GitHub Portfolio</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Client Scripts -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% if student %}
+        <script src="{{ url_for('static', filename='js/mentor.js') }}"></script>
+    {% endif %}
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Create Student Profile — SkillPath AI{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 780px;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <span class="badge badge-primary">Step 1 of 3 • Profile & Goals</span>
+        <h1 style="margin-top: 0.5rem;">Tell Us About Your Career Vision</h1>
+        <p>We'll analyze your current background to calculate your exact gaps and build a realistic timeline.</p>
+    </div>
+
+    <div class="card">
+        <form method="POST" action="{{ url_for('onboarding') }}" id="onboarding-form">
+            <!-- Student Info -->
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="name" class="form-label">Full Name or Display Name *</label>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Maya Sharma" required value="{{ student.name if student else '' }}">
+                    <div class="form-help">How should your mentor address you?</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="education_level" class="form-label">Current Education Level *</label>
+                    <select id="education_level" name="education_level" class="form-control" required>
+                        <option value="">Select current status...</option>
+                        <option value="1st Year B.Tech / BCA" {% if student and '1st' in student.education_level %}selected{% endif %}>1st Year B.Tech / BCA</option>
+                        <option value="2nd Year B.Tech / BCA" {% if student and '2nd' in student.education_level %}selected{% endif %}>2nd Year B.Tech / BCA</option>
+                        <option value="3rd Year B.Tech / BCA" {% if student and '3rd' in student.education_level %}selected{% endif %}>3rd Year B.Tech / BCA</option>
+                        <option value="4th Year / Final Year" {% if student and '4th' in student.education_level %}selected{% endif %}>4th Year / Final Year</option>
+                        <option value="MCA / M.Tech Graduate" {% if student and 'MCA' in student.education_level %}selected{% endif %}>MCA / M.Tech Graduate</option>
+                        <option value="Self-Taught / Career Transitioner" {% if student and 'Self' in student.education_level %}selected{% endif %}>Self-Taught / Career Transitioner</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Target Career Goal -->
+            <div class="form-group">
+                <label for="career_goal" class="form-label">Target Career Goal *</label>
+                <select id="career_goal" name="career_goal" class="form-control" required onchange="toggleCustomGoal(this.value)">
+                    <option value="">Select your target role...</option>
+                    {% for c_name, c_data in careers.items() %}
+                        <option value="{{ c_name }}" {% if (student and student.career_goal == c_name) or request.args.get('goal') == c_name %}selected{% endif %}>
+                            {{ c_name }}
+                        </option>
+                    {% endfor %}
+                    <option value="Custom" {% if student and student.career_goal not in careers %}selected{% endif %}>Custom / Other Specialization</option>
+                </select>
+            </div>
+
+            <!-- Custom Goal Text Field (conditionally shown) -->
+            <div class="form-group" id="custom-goal-group" style="display: {% if student and student.career_goal not in careers %}block{% else %}none{% endif %};">
+                <label for="custom_goal" class="form-label">Specify Your Custom Role</label>
+                <input type="text" id="custom_goal" name="custom_goal" class="form-control" placeholder="e.g. Cloud Security Engineer" value="{{ student.custom_goal if student else '' }}">
+            </div>
+
+            <!-- Pacing & Study Availability -->
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="daily_hours" class="form-label">Available Study Time Per Day (Hours) *</label>
+                    <input type="number" id="daily_hours" name="daily_hours" class="form-control" step="0.5" min="0.5" max="12" value="{{ student.daily_hours if student else '2.0' }}" required>
+                    <div class="form-help">Be realistic! Consistency beats occasional 10-hour weekend spikes.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="target_weeks" class="form-label">Target Preparation Timeframe (Weeks) *</label>
+                    <input type="number" id="target_weeks" name="target_weeks" class="form-control" min="2" max="52" value="{{ student.target_weeks if student else '12' }}" required>
+                    <div class="form-help">e.g. 12 weeks for a typical semester or internship prep.</div>
+                </div>
+            </div>
+
+            <!-- Preferred Learning Style -->
+            <div class="form-group">
+                <label for="learning_style" class="form-label">Preferred Learning Format</label>
+                <select id="learning_style" name="learning_style" class="form-control">
+                    <option value="Project-first" {% if student and student.learning_style == 'Project-first' %}selected{% endif %}>Project-first (Build practical apps immediately)</option>
+                    <option value="Reading & Official Docs" {% if student and student.learning_style == 'Reading & Official Docs' %}selected{% endif %}>Reading Official Docs & Deep Articles</option>
+                    <option value="Video Tutorials" {% if student and student.learning_style == 'Video Tutorials' %}selected{% endif %}>Video Tutorials & Walkthroughs</option>
+                    <option value="Balanced Hybrid" {% if student and student.learning_style == 'Balanced Hybrid' %}selected{% endif %}>Balanced Hybrid (Mix of reading, video, and code)</option>
+                </select>
+            </div>
+
+            <!-- Existing Skills & Self-Assessment -->
+            <div class="form-group" style="margin-top: 2rem;">
+                <label class="form-label">Self-Assessed Skill Baseline (Optional)</label>
+                <p style="font-size: 0.85rem; color: var(--slate-600); margin-bottom: 0.75rem;">
+                    Rate your comfort level with common foundational skills. We will combine this with your diagnostic test to calculate your precise gap.
+                </p>
+
+                <div class="chip-grid">
+                    {% for s in all_skills[:14] %}
+                        <div class="skill-chip">
+                            <span>{{ s }}</span>
+                            <select name="skill_level_{{ s }}">
+                                <option value="None">None</option>
+                                <option value="Beginner" selected>Beginner</option>
+                                <option value="Intermediate">Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                            </select>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div style="margin-top: 2.5rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--slate-200); padding-top: 1.5rem;">
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary btn-lg">
+                    Continue to Diagnostic Quiz →
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function toggleCustomGoal(val) {
+    const customGroup = document.getElementById('custom-goal-group');
+    if (val === 'Custom') {
+        customGroup.style.display = 'block';
+        document.getElementById('custom_goal').focus();
+    } else {
+        customGroup.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

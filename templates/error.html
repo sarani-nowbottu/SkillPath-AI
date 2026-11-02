@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Error {{ code }} — SkillPath AI{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; text-align: center; padding: 4rem 1rem;">
+    <span class="badge badge-danger">Error {{ code }}</span>
+    <h1 style="margin: 1rem 0;">{{ message }}</h1>
+    <p style="margin-bottom: 2rem;">
+        The system encountered an unexpected state. Don't worry, your progress and data in SQLite are safe.
+    </p>
+    <div style="display: flex; gap: 1rem; justify-content: center;">
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Go to Homepage</a>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Return to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

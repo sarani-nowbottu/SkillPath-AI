@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Student Profile & Settings — SkillPath AI{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 680px;">
+    <div style="margin-bottom: 2rem;">
+        <span class="badge badge-primary">Account & Study Pace</span>
+        <h1 style="margin-top: 0.5rem;">Study Profile & Schedule</h1>
+        <p>Adjust your study commitment anytime. SkillPath will dynamically recalibrate your roadmap feasibility.</p>
+    </div>
+
+    <div class="card">
+        <form method="POST" action="{{ url_for('profile') }}">
+            <div class="form-group">
+                <label class="form-label">Student Name</label>
+                <input type="text" class="form-control" value="{{ student.name }}" disabled style="background: var(--slate-100); color: var(--slate-600);">
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label class="form-label">Education Status</label>
+                    <input type="text" class="form-control" value="{{ student.education_level }}" disabled style="background: var(--slate-100); color: var(--slate-600);">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Career Goal</label>
+                    <input type="text" class="form-control" value="{{ student.career_goal }}" disabled style="background: var(--slate-100); color: var(--slate-600);">
+                </div>
+            </div>
+
+            <div class="grid-2" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--slate-200);">
+                <div class="form-group">
+                    <label for="daily_hours" class="form-label">Daily Study Time (Hours)</label>
+                    <input type="number" id="daily_hours" name="daily_hours" class="form-control" step="0.5" min="0.5" max="12" value="{{ student.daily_hours }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="target_weeks" class="form-label">Target Weeks</label>
+                    <input type="number" id="target_weeks" name="target_weeks" class="form-control" min="1" max="52" value="{{ student.target_weeks }}" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="learning_style" class="form-label">Learning Style Preference</label>
+                <select id="learning_style" name="learning_style" class="form-control">
+                    <option value="Project-first" {% if student.learning_style == 'Project-first' %}selected{% endif %}>Project-first (Build real apps)</option>
+                    <option value="Reading & Official Docs" {% if student.learning_style == 'Reading & Official Docs' %}selected{% endif %}>Reading Official Docs & Guides</option>
+                    <option value="Video Tutorials" {% if student.learning_style == 'Video Tutorials' %}selected{% endif %}>Video Tutorials</option>
+                    <option value="Balanced Hybrid" {% if student.learning_style == 'Balanced Hybrid' %}selected{% endif %}>Balanced Hybrid</option>
+                </select>
+            </div>
+
+            {% if roadmap %}
+                <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1rem; margin-top: 1.5rem;">
+                    <div style="font-size: 0.82rem; font-weight: 700; color: var(--slate-600); margin-bottom: 0.25rem;">CURRENT ROADMAP PACING</div>
+                    <p style="font-size: 0.88rem; color: var(--slate-700); margin-bottom: 0;">
+                        {{ roadmap.feasibility_note }}
+                    </p>
+                </div>
+            {% endif %}
+
+            <div style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
+                <button type="submit" class="btn btn-primary">Recalibrate Schedule</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Danger Zone Card -->
+    <div class="card" style="border-color: var(--danger-border); margin-top: 2rem;">
+        <h4 style="color: var(--danger); margin-bottom: 0.5rem;">Danger Zone</h4>
+        <p style="font-size: 0.88rem; color: var(--slate-600); margin-bottom: 1rem;">
+            Reset your learning roadmap, checklist progress, and diagnostic quiz attempts to start fresh with a different career goal.
+        </p>
+        <button type="button" id="reset-roadmap-btn" class="btn btn-secondary btn-sm" style="color: var(--danger); border-color: var(--danger-border);">
+            Reset All Roadmap Data
+        </button>
+    </div>
+</div>
+{% endblock %}

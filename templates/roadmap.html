@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard & Roadmap — SkillPath AI{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Top Dashboard Header -->
+    <div class="card" style="background: white; border: 1px solid var(--slate-200); margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem;">
+            <div>
+                <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem;">
+                    <span class="badge badge-primary">{{ student.career_goal }}</span>
+                    <span class="badge badge-neutral">{{ student.education_level }}</span>
+                </div>
+                <h1 style="font-size: 2rem;">{{ student.name }}'s Learning Roadmap</h1>
+                <p style="margin-bottom: 0; font-size: 0.95rem; color: var(--slate-600);">
+                    Target Commitment: <strong>{{ student.daily_hours }} hrs/day</strong> • Schedule: <strong>{{ student.target_weeks }} Weeks</strong>
+                </p>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <a href="{{ url_for('gap_analysis') }}" class="btn btn-secondary btn-sm">
+                    View Skill Gaps
+                </a>
+                <a href="{{ url_for('assessment') }}" class="btn btn-secondary btn-sm">
+                    Retake Quiz
+                </a>
+                <button type="button" id="reset-roadmap-btn" class="btn btn-secondary btn-sm" style="color: var(--danger); border-color: var(--danger-border);">
+                    Reset Roadmap
+                </button>
+            </div>
+        </div>
+
+        <!-- Overall Progress Ring & Stats Bar -->
+        <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--slate-100);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <span style="font-weight: 700; color: var(--slate-800); font-size: 0.95rem;">Overall Roadmap Completion</span>
+                <div>
+                    <strong id="overall-progress-text" style="font-size: 1.25rem; color: var(--primary);">{{ roadmap.overall_progress }}%</strong>
+                    <span id="overall-tasks-count" style="font-size: 0.85rem; color: var(--slate-500); margin-left: 0.5rem;">
+                        ({{ roadmap.completed_tasks }} / {{ roadmap.total_tasks }} Tasks)
+                    </span>
+                </div>
+            </div>
+
+            <div class="progress-bar-overall">
+                <div id="overall-progress-fill" class="progress-fill" style="width: {{ roadmap.overall_progress }}%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature H: Adaptive Recommendations Banner -->
+    {% if recommendations %}
+        <section style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                <h3 style="font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                    Adaptive Next-Action Recommendations
+                </h3>
+                <span style="font-size: 0.8rem; color: var(--slate-500);">Dynamic logic based on your test score & pace</span>
+            </div>
+
+            <div class="grid-2">
+                {% for r in recommendations %}
+                    <div class="card" style="margin-bottom: 0; border-left: 4px solid {% if r.badge_type == 'action' %}var(--primary){% elif r.badge_type == 'warning' %}var(--warning){% elif r.badge_type == 'success' %}var(--success){% else %}var(--accent){% endif %};">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
+                            <span class="badge {% if r.badge_type == 'action' %}badge-primary{% elif r.badge_type == 'warning' %}badge-warning{% elif r.badge_type == 'success' %}badge-success{% else %}badge-neutral{% endif %}">
+                                {{ r.badge }}
+                            </span>
+                        </div>
+                        <h4 style="margin-bottom: 0.35rem;">{{ r.title }}</h4>
+                        <p style="font-size: 0.9rem; color: var(--slate-700); margin-bottom: 0.5rem;">{{ r.action }}</p>
+                        <div style="font-size: 0.8rem; color: var(--slate-500); background: var(--slate-50); padding: 0.4rem 0.6rem; border-radius: var(--radius-sm);">
+                            <strong>Why this recommendation:</strong> {{ r.rationale }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    <!-- Sequential Stages Timeline -->
+    <section>
+        <div style="margin-bottom: 1.5rem;">
+            <h2>Curriculum Stages & Practical Milestones</h2>
+            <p>Stages are strictly ordered by foundational prerequisites. Complete checklist items to unlock mini-projects.</p>
+        </div>
+
+        <div>
+            {% for s in roadmap.stages %}
+                <div class="timeline-stage {% if s.is_completed %}completed{% endif %}">
+                    <div class="timeline-node">
+                        {% if s.is_completed %}✓{% else %}{{ s.stage_order }}{% endif %}
+                    </div>
+
+                    <div class="card" style="margin-bottom: 0;">
+                        <!-- Stage Header -->
+                        <div class="card-header">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span class="badge badge-primary">Stage {{ s.stage_order }}</span>
+                                    <span class="badge {% if s.is_completed %}badge-success{% else %}badge-neutral{% endif %} stage-status-badge">
+                                        {% if s.is_completed %}Completed{% else %}In Progress ({{ s.tasks_completed }}/{{ s.tasks_total }}){% endif %}
+                                    </span>
+                                </div>
+                                <h3 style="margin-top: 0.35rem;">{{ s.title }}</h3>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="font-size: 0.88rem; font-weight: 600; color: var(--slate-700);">
+                                    ~{{ s.estimated_hours }} Hours
+                                </span>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 0.95rem; color: var(--slate-600); margin-bottom: 1.25rem;">
+                            {{ s.description }}
+                        </p>
+
+                        <!-- Two-Column Layout: Checklist on Left, Project & Resources on Right -->
+                        <div class="grid-2">
+                            <!-- Left: Actionable Task Checklist -->
+                            <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1.25rem;">
+                                <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--slate-800);">
+                                    Learning Checklist ({{ s.tasks_completed }}/{{ s.tasks_total }})
+                                </h4>
+
+                                <div style="display: flex; flex-direction: column;">
+                                    {% for t in s.tasks %}
+                                        <label class="task-item {% if t.is_completed %}completed{% endif %}">
+                                            <input type="checkbox" class="task-checkbox" data-task-id="{{ t.id }}" {% if t.is_completed %}checked{% endif %}>
+                                            <span class="task-title">{{ t.title }}</span>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Verified Reputable Resources Links -->
+                                <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--slate-200);">
+                                    <div style="font-size: 0.82rem; font-weight: 700; color: var(--slate-600); margin-bottom: 0.4rem; text-transform: uppercase;">
+                                        Verified Free Resources:
+                                    </div>
+                                    <ul style="list-style: none; padding-left: 0;">
+                                        {% for r in s.resources %}
+                                            <li style="margin-bottom: 0.35rem; font-size: 0.88rem;">
+                                                <a href="{{ r.url }}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                                        <polyline points="15 3 21 3 21 9"></polyline>
+                                                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                                                    </svg>
+                                                    {{ r.title }}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Right: Feature I Mini-Project Recommendation -->
+                            {% if s.mini_project %}
+                                <div style="background: white; border: 1px solid var(--slate-200); border-radius: var(--radius-md); padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+                                    <div>
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                                            <span class="badge badge-primary">Stage Mini-Project</span>
+                                            <span class="badge badge-neutral">{{ s.mini_project.difficulty }}</span>
+                                        </div>
+                                        <h4 style="margin-bottom: 0.4rem; color: var(--slate-900);">
+                                            {{ s.mini_project.title }}
+                                        </h4>
+                                        <p style="font-size: 0.85rem; color: var(--slate-600); margin-bottom: 0.75rem;">
+                                            {{ s.mini_project.problem }}
+                                        </p>
+
+                                        <div style="font-size: 0.82rem; margin-bottom: 0.75rem;">
+                                            <strong>Core Requirements:</strong>
+                                            <ul style="padding-left: 1.25rem; margin-top: 0.25rem; color: var(--slate-600);">
+                                                {% for req in s.mini_project.requirements %}
+                                                    <li>{{ req }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+
+                                        {% if s.mini_project.stretch_goals %}
+                                            <div style="font-size: 0.82rem; margin-bottom: 0.75rem;">
+                                                <strong>Optional Stretch Goals:</strong>
+                                                <ul style="padding-left: 1.25rem; margin-top: 0.25rem; color: var(--slate-500);">
+                                                    {% for sg in s.mini_project.stretch_goals %}
+                                                        <li>{{ sg }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <div style="background: var(--primary-light); padding: 0.6rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.8rem; color: #3730a3; margin-top: 0.75rem;">
+                                        <strong>Completion Criteria:</strong> {{ s.mini_project.completion_criteria }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

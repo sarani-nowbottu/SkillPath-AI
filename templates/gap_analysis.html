@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Skill-Gap Analysis — SkillPath AI{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 980px;">
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <span class="badge badge-primary">Step 3 of 3 • Gap Analysis</span>
+            <h1 style="margin-top: 0.5rem;">Target Benchmark vs Current Skills</h1>
+            <p>Calculated for <strong>{{ student.name }}</strong> targeting <strong>{{ student.career_goal }}</strong>.</p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="{{ url_for('assessment') }}" class="btn btn-secondary btn-sm">Retake Diagnostic Quiz</a>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-sm">Open My Roadmap →</a>
+        </div>
+    </div>
+
+    <!-- Feasibility & Study Workload Alert -->
+    <div class="card" style="border-left: 5px solid {% if feasibility.status == 'Realistic' %}var(--success){% elif feasibility.status == 'Challenging' %}var(--warning){% else %}var(--danger){% endif %};">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span class="badge {% if feasibility.status == 'Realistic' %}badge-success{% elif feasibility.status == 'Challenging' %}badge-warning{% else %}badge-danger{% endif %}">
+                        Schedule Feasibility: {{ feasibility.status }}
+                    </span>
+                    <span style="font-size: 0.85rem; color: var(--slate-500);">
+                        Total Required Workload: <strong>{{ feasibility.total_hours }} Hours</strong>
+                    </span>
+                </div>
+                <p style="margin-top: 0.5rem; margin-bottom: 0; font-size: 0.95rem; color: var(--slate-700);">
+                    {{ feasibility.note }}
+                </p>
+            </div>
+            <div>
+                <a href="{{ url_for('profile') }}" class="btn btn-secondary btn-sm">Adjust Study Hours</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skill Gaps Table & Visualizer -->
+    <div class="card">
+        <div class="card-header">
+            <h3>Detailed Skill Breakdown</h3>
+            <div style="display: flex; gap: 1rem; font-size: 0.8rem; color: var(--slate-500);">
+                <span>■ Indigo: Current Score</span>
+                <span>| Dark Line: Industry Target</span>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column;">
+            {% for s in skills %}
+                <div class="gap-item">
+                    <div class="gap-meta">
+                        <div>
+                            <strong style="font-size: 1.05rem; color: var(--slate-900);">{{ s.skill_name }}</strong>
+                            <span style="font-size: 0.8rem; color: var(--slate-500); margin-left: 0.5rem;">
+                                (Self-rating: {{ s.self_level }})
+                            </span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                            <span class="badge {% if s.gap_level == 'Critical' %}badge-danger{% elif s.gap_level == 'Moderate' %}badge-warning{% elif s.gap_level == 'Minor' %}badge-primary{% else %}badge-success{% endif %}">
+                                Gap: {{ s.gap_level }}
+                            </span>
+                            <span class="badge {% if s.priority == 'High' %}badge-danger{% elif s.priority == 'Medium' %}badge-warning{% elif s.priority == 'Completed' %}badge-success{% else %}badge-neutral{% endif %}">
+                                Priority: {{ s.priority }}
+                            </span>
+                            <span style="font-weight: 700; font-size: 0.95rem; color: var(--slate-800); min-width: 75px; text-align: right;">
+                                {{ s.estimated_score }}% / {{ s.target_score }}%
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Visual Comparison Bar -->
+                    <div class="gap-bar-container">
+                        <div class="gap-bar-current" style="width: {{ s.estimated_score }}%;"></div>
+                        <div class="gap-target-marker" style="left: {{ s.target_score }}%;" title="Target Benchmark: {{ s.target_score }}%"></div>
+                    </div>
+
+                    <div style="font-size: 0.85rem; color: var(--slate-600); margin-top: 0.35rem;">
+                        <strong>Why it matters:</strong> {{ s.why_text }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
+        <a href="{{ url_for('assessment') }}" class="btn btn-secondary">← Back to Diagnostic Quiz</a>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">
+            Proceed to Personalized Learning Roadmap →
+        </a>
+    </div>
+</div>
+{% endblock %}
